@@ -31,7 +31,6 @@ import {
   X
 } from "lucide-react";
 
-
 const lessons = [
   { title: "Shrink the starting line", body: "Replace “finish the quest” with one visible action, such as opening the file and writing one heading." },
   { title: "Externalize time", body: "Use the campfire timer and its gentle chime. The goal is awareness, not pressure." },
@@ -86,21 +85,72 @@ const makeSteps = title => {
 
 
 export default function Questline() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState(() => {
+	const saved = localStorage.getItem("questline_tasks");
+	return saved ? JSON.parse(saved) : initialTasks;
+	});
+React.useEffect(() => {
+	localStorage.setItem(
+		"questline_tasks",
+	JSON.stringify(tasks)
+	);
+}, [tasks]);  
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Side");
   const [minutes, setMinutes] = useState(10);
   const [seconds, setSeconds] = useState(600);
   const [running, setRunning] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [xp, setXp] = useState(0);
-  const [gold, setGold] = useState(0);
+const [xp, setXp] = useState(() => {
+	return Number(
+		localStorage.getItem("questline_xp")
+	) || 0;
+});
+React.useEffect(() => {
+  localStorage.setItem(
+    "questline_xp",
+    xp
+  );
+}, [xp]);
+const [gold, setGold] = useState(() => {
+  return Number(
+    localStorage.getItem("questline_gold")
+  ) || 0;
+});
+React.useEffect(() => {
+  localStorage.setItem(
+    "questline_gold",
+    gold
+  );
+}, [gold]);
   const [focusRounds, setFocusRounds] = useState(0);
   const [lesson, setLesson] = useState(0);
   const [rewardOpen, setRewardOpen] = useState(false);
   const [toast, setToast] = useState("");
   const timerRef = useRef(null);
 
+
+React.useEffect(() => {
+  const today = new Date()
+    .toISOString()
+    .split("T")[0];
+
+  const lastLogin =
+    localStorage.getItem("questline_last_login");
+
+  if (lastLogin !== today) {
+    setGold(g => g + 10);
+
+    announce(
+      "Daily Login Reward: +10 Gold!"
+    );
+
+    localStorage.setItem(
+      "questline_last_login",
+      today
+    );
+  }
+}, []);
 
   const level = Math.floor(xp / 100) + 1;
   const rank = ranks[Math.min(level - 1, ranks.length - 1)];
