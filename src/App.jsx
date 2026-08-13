@@ -425,17 +425,10 @@ const decomposeTask = (id, force = false) => {
   if (!task) return;
 
   if (task.steps.length && !force) {
-    setTasks(current =>
-      current.map(item =>
-        item.id === id
-          ? { ...item, expanded: true }
-          : item
-      )
-    );
-
-    announce("This quest already has a revealed path.");
-    return;
-  }
+  setTasks(...)
+  announce("This quest already has a revealed path.");
+  return;
+}
 
   const steps = makeSteps(task.title, task.type).map(
     (step, index) => ({
@@ -593,7 +586,7 @@ const decomposeTask = (id, force = false) => {
                       <div className="mt-4 flex flex-wrap gap-2">
                         <Button onClick={launchSelected} size="sm"><Play size={16}/><span className="ml-1">Start 5-minute launch</span></Button>
                         <Button onClick={() => decomposeTask(selected.id)} size="sm" variant="outline"><Swords size={16}/><span className="ml-1">Reveal smaller steps</span></Button>
-						<Button onClick={() => decomposeTask(selected.id, true)} size="sm" variant="outline" ><Dices size={16} /><span className="ml-1">Reroll quest path</span></Button>)
+						<Button onClick={() => decomposeTask(selected.id, true)} size="sm" variant="outline" ><Dices size={16} /><span className="ml-1">Reroll quest path</span></Button>
                         <Button onClick={() => completeTask(selected.id)} size="sm" variant="outline">Complete quest</Button>
                       </div>
                     </motion.div>
