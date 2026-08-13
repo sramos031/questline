@@ -66,21 +66,189 @@ const rewardChoices = [
 ];
 
 
-const makeSteps = title => {
-  const lower = title.toLowerCase();
-  if (lower.includes("email") || lower.includes("message")) {
-    return ["Open the message or compose window", "Write the purpose in one sentence", "Add the essential details", "Review once", "Send or save the draft"];
+const unique = items => [...new Set(items.filter(Boolean))];
+
+const pick = items => items[Math.floor(Math.random() * items.length)];
+
+const actionPatterns = [
+  {
+    words: ["create", "build", "make", "design", "develop", "prepare"],
+    steps: title => [
+      `Write one sentence describing the finished result for "${title}"`,
+      "Gather the minimum source material needed",
+      pick([
+        "Create a rough outline",
+        "Sketch the basic structure",
+        "List the three most important parts"
+      ]),
+      "Create the smallest usable first section",
+      "Review the result against the intended outcome",
+      "Write the exact next action"
+    ]
+  },
+  {
+    words: ["fix", "debug", "troubleshoot", "investigate", "resolve"],
+    steps: title => [
+      `Write down what is currently happening with "${title}"`,
+      "Write down what should happen instead",
+      "Reproduce the issue with the smallest safe test",
+      "Capture the exact error, output, or unexpected behavior",
+      "Change only one variable",
+      "Run the test again",
+      "Record the result and next hypothesis"
+    ]
+  },
+  {
+    words: ["review", "check", "validate", "verify", "audit", "test"],
+    steps: title => [
+      `Define what a successful review of "${title}" should confirm`,
+      "Open the relevant item",
+      "Check the highest-risk section first",
+      "Record issues without fixing them yet",
+      "Resolve or assign each recorded issue",
+      "Perform one final validation"
+    ]
+  },
+  {
+    words: ["research", "compare", "evaluate", "explore", "learn"],
+    steps: title => [
+      `Write the specific question "${title}" needs to answer`,
+      "Choose no more than three useful sources",
+      "Review the first source",
+      "Capture only information relevant to the question",
+      "Compare the findings",
+      "Write a short conclusion and next decision"
+    ]
+  },
+  {
+    words: ["clean", "organize", "sort", "declutter"],
+    steps: title => [
+      `Choose one clearly bounded part of "${title}"`,
+      "Gather the tools or containers needed",
+      "Remove obvious items first",
+      "Group what remains",
+      "Put away one group at a time",
+      "Stop and identify the next bounded area"
+    ]
+  },
+  {
+    words: ["send", "email", "message", "contact", "reply", "respond"],
+    steps: title => [
+      `Open the correct conversation or compose window for "${title}"`,
+      "Write the purpose in one sentence",
+      "Add only the details the recipient needs",
+      "Add the requested action or question",
+      "Review names, dates, and attachments",
+      "Send or save the draft"
+    ]
   }
-  if (lower.includes("clean") || lower.includes("organize")) {
-    return ["Choose one small area", "Gather the needed tools", "Remove obvious clutter", "Put remaining items into groups", "Stop and note the next area"];
+];
+
+const objectPatterns = [
+  {
+    words: ["sql", "database", "query", "table"],
+    additions: [
+      "Confirm the correct environment and database",
+      "Create or identify a safe test case",
+      "Run a read-only validation query first",
+      "Save the query before making changes",
+      "Review affected row counts"
+    ]
+  },
+  {
+    words: ["script", "javascript", "code", "api", "webcenter"],
+    additions: [
+      "Open the relevant editor and source file",
+      "Identify the smallest input that demonstrates the behavior",
+      "Inspect the current output",
+      "Make one isolated change",
+      "Run the smallest available test"
+    ]
+  },
+  {
+    words: ["demo", "training", "presentation", "slides", "video"],
+    additions: [
+      "Identify the audience and desired takeaway",
+      "List the essential feature or concept to demonstrate",
+      "Create the opening and closing first",
+      "Prepare one realistic example",
+      "Perform a short practice run"
+    ]
+  },
+  {
+    words: ["report", "document", "guide", "article"],
+    additions: [
+      "Identify the audience and purpose",
+      "Gather the authoritative source material",
+      "Create headings before writing paragraphs",
+      "Draft the easiest section first",
+      "Check completeness and readability"
+    ]
+  },
+  {
+    words: ["meeting", "call", "discussion"],
+    additions: [
+      "Write the desired outcome",
+      "List the decisions or questions needed",
+      "Gather supporting material",
+      "Prepare a concise agenda",
+      "Record follow-up actions afterward"
+    ]
   }
-  if (lower.includes("report") || lower.includes("document") || lower.includes("demo") || lower.includes("training")) {
-    return ["Define the finished outcome in one sentence", "Gather the source material", "Create a rough outline", "Build only the first section", "Review what exists", "Write the next visible action"];
+];
+
+const fallbackSteps = title => [
+  `Describe what "done" means for "${title}"`,
+  "Identify the smallest visible starting action",
+  "Gather only what is required for that action",
+  "Work for one short focus round",
+  "Review what changed",
+  "Write the exact next action"
+];
+
+const makeSteps = (title, questType = "Side") => {
+  const normalized = title.toLowerCase().trim();
+
+  const actionMatch = actionPatterns.find(pattern =>
+    pattern.words.some(word => normalized.includes(word))
+  );
+
+  const objectMatches = objectPatterns.filter(pattern =>
+    pattern.words.some(word => normalized.includes(word))
+  );
+
+  let steps = actionMatch
+    ? actionMatch.steps(title)
+    : fallbackSteps(title);
+
+  const objectSteps = objectMatches.flatMap(pattern => pattern.additions);
+
+  /*
+    Put context-specific setup near the beginning,
+    but keep the first action generated by the action pattern.
+  */
+  if (objectSteps.length) {
+    steps = [
+      steps[0],
+      ...objectSteps,
+      ...steps.slice(1)
+    ];
   }
-  if (lower.includes("script") || lower.includes("code") || lower.includes("sql") || lower.includes("webcenter")) {
-    return ["Open the relevant editor or system", "Write down the expected result", "Locate the smallest test case", "Run one safe test", "Review the output", "Record the next change"];
-  }
-  return ["Define what done looks like", "Gather only what is needed to begin", "Choose the smallest visible first action", "Work for one short focus round", "Review progress without judgment", "Write the exact next action"];
+
+  steps = unique(steps);
+
+  /*
+    Keep quests from becoming overwhelming.
+    Boss Quests can reveal more detail.
+  */
+  const limits = {
+    Tiny: 3,
+    Side: 5,
+    Adventure: 7,
+    Boss: 9
+  };
+
+  return steps.slice(0, limits[questType] || 6);
 };
 
 
@@ -252,19 +420,47 @@ React.useEffect(() => {
     selectTask(chosen.id);
   };
 
-  const decomposeTask = id => {
-    const task = tasks.find(item => item.id === id);
-    if (!task) return;
-    if (task.steps.length) {
-      setTasks(current => current.map(item => item.id === id ? { ...item, expanded: true } : item));
-      announce("This quest already has a revealed path.");
-      return;
-    }
-    const steps = makeSteps(task.title).map((step, index) => ({ id: `${id}-${index}`, title: step, done: false }));
-    setTasks(current => current.map(item => item.id === id ? { ...item, steps, expanded: true, type: item.type === "Tiny" ? "Side" : item.type } : item));
-    setSelectedId(id);
-    announce("The path has been revealed!");
-  };
+const decomposeTask = (id, force = false) => {
+  const task = tasks.find(item => item.id === id);
+  if (!task) return;
+
+  if (task.steps.length && !force) {
+    setTasks(current =>
+      current.map(item =>
+        item.id === id
+          ? { ...item, expanded: true }
+          : item
+      )
+    );
+
+    announce("This quest already has a revealed path.");
+    return;
+  }
+
+  const steps = makeSteps(task.title, task.type).map(
+    (step, index) => ({
+      id: `${id}-${Date.now()}-${index}`,
+      title: step,
+      done: false
+    })
+  );
+
+  setTasks(current =>
+    current.map(item =>
+      item.id === id
+        ? {
+            ...item,
+            steps,
+            expanded: true,
+            type: item.type === "Tiny" ? "Side" : item.type
+          }
+        : item
+    )
+  );
+
+  setSelectedId(id);
+  announce(force ? "A new route has been revealed!" : "The path has been revealed!");
+};
 
 
   const toggleStep = (taskId, stepId) => {
@@ -315,6 +511,23 @@ React.useEffect(() => {
     setRewardOpen(false);
     announce(`${reward.name} unlocked. Enjoy it guilt-free!`);
   };
+  
+  const updateStepTitle = (taskId, stepId, newTitle) => {
+  setTasks(current =>
+    current.map(task => {
+      if (task.id !== taskId) return task;
+
+      return {
+        ...task,
+        steps: task.steps.map(step =>
+          step.id === stepId
+            ? { ...step, title: newTitle }
+            : step
+        )
+      };
+    })
+  );
+};
 
 
   const format = value => `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
@@ -380,6 +593,7 @@ React.useEffect(() => {
                       <div className="mt-4 flex flex-wrap gap-2">
                         <Button onClick={launchSelected} size="sm"><Play size={16}/><span className="ml-1">Start 5-minute launch</span></Button>
                         <Button onClick={() => decomposeTask(selected.id)} size="sm" variant="outline"><Swords size={16}/><span className="ml-1">Reveal smaller steps</span></Button>
+						<Button onClick={() => decomposeTask(selected.id, true)} size="sm" variant="outline" ><Dices size={16} /><span className="ml-1">Reroll quest path</span></Button>)
                         <Button onClick={() => completeTask(selected.id)} size="sm" variant="outline">Complete quest</Button>
                       </div>
                     </motion.div>
@@ -390,6 +604,9 @@ React.useEffect(() => {
                 <div className="space-y-3">
                   {tasks.map(task => {
                     const completedSteps = task.steps.filter(step => step.done).length;
+					const completed = task.steps.filter(step => step.done);
+					const upcoming = task.steps.filter(step => !step.done).slice(0, completed.length + 3);
+					const visibleSteps = [...completed,...upcoming];
                     const stepPercent = task.steps.length ? (completedSteps / task.steps.length) * 100 : 0;
                     return (
                       <motion.div layout key={task.id} className={`rounded-2xl border p-4 ${task.done ? "border-emerald-400 bg-emerald-50" : selectedId === task.id ? "border-violet-500 bg-white" : "border-amber-800/20 bg-white/60"}`}>
@@ -415,21 +632,24 @@ React.useEffect(() => {
 
                         {task.steps.length > 0 && (
                           <div className="mt-4 pl-9">
-                            <button onClick={() => toggleExpanded(task.id)} className="flex w-full items-center justify-between text-sm font-semibold text-amber-900">
-                              <span>Quest path · {completedSteps}/{task.steps.length} subquests</span>
+                            <div onClick={() => toggleExpanded(task.id)} className="flex w-full items-center justify-between text-sm font-semibold text-amber-900">
+                              <Input value={step.title} onClick={event => event.stopPropagation()} onChange={event => updateStepTitle(task.id, step.id, event.target.value)}className={`border-0 bg-transparent p-0 shadow-none ${step.done ? "line-through" : ""}`}/>
                               {task.expanded ? <ChevronDown size={17}/> : <ChevronRight size={17}/>} 
-                            </button>
+							  <button onClick={() => toggleStep(task.id, step.id)} className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${step.done? "bg-emerald-600 text-white": "bg-amber-800 text-amber-50"}`}>{step.done ? "✓" : index + 1}</button>
+                            </div>
                             <Progress value={stepPercent} className="mt-2 h-2" />
                             <AnimatePresence initial={false}>
                               {task.expanded && (
                                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3 space-y-2 overflow-hidden">
-                                  {task.steps.map((step, index) => (
+                                  {visibleSteps.map((step, index) => (
                                     <button key={step.id} onClick={() => toggleStep(task.id, step.id)} className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm transition ${step.done ? "border-emerald-200 bg-emerald-50 text-stone-500" : "border-amber-800/15 bg-amber-50 hover:border-violet-400"}`}>
                                       <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${step.done ? "bg-emerald-600 text-white" : "bg-amber-800 text-amber-50"}`}>{step.done ? "✓" : index + 1}</span>
                                       <span className={step.done ? "line-through" : ""}>{step.title}</span>
                                       {!step.done && <span className="ml-auto text-xs text-amber-800">+5 XP</span>}
                                     </button>
                                   ))}
+								  {task.steps.length > visibleSteps.length && (
+									<div className="text-center text-xs text-stone-500 mt-2">{task.steps.length - visibleSteps.length} more steps will be revealed as you progress... </div>)}
                                 </motion.div>
                               )}
                             </AnimatePresence>
