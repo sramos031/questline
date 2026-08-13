@@ -584,11 +584,40 @@ const decomposeTask = (id, force = false) => {
                       <div className="mt-1 text-xl font-bold">{selected.title}</div>
                       {selected.steps.length > 0 && <div className="mt-2 flex items-center gap-2 text-sm"><Footprints size={16}/><span>Next step: {selected.steps.find(step => !step.done)?.title || "Claim your victory"}</span></div>}
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <Button onClick={launchSelected} size="sm"><Play size={16}/><span className="ml-1">Start 5-minute launch</span></Button>
-                        <Button onClick={() => decomposeTask(selected.id)} size="sm" variant="outline"><Swords size={16}/><span className="ml-1">Reveal smaller steps</span></Button>
-						<Button onClick={() => decomposeTask(selected.id, true)} size="sm" variant="outline" ><Dices size={16} /><span className="ml-1">Reroll quest path</span></Button>
-                        <Button onClick={() => completeTask(selected.id)} size="sm" variant="outline">Complete quest</Button>
-                      </div>
+						<Button onClick={launchSelected} size="sm">
+							<Play size={16}/>
+							<span className="ml-1">Start 5-minute launch</span>
+						</Button>
+
+						<Button
+						onClick={() => decomposeTask(selected.id)}
+						size="sm"
+						variant="outline"
+						>
+							<Swords size={16}/>
+							<span className="ml-1">Reveal smaller steps</span>
+						</Button>
+
+						{selected.steps.length > 0 && (
+						<Button
+						onClick={() => decomposeTask(selected.id, true)}
+						size="sm"
+						variant="outline"
+						>
+							<Dices size={16}/>
+							<span className="ml-1">Reroll quest path</span>
+						</Button>
+						)}
+
+						<Button
+						onClick={() => completeTask(selected.id)}
+						size="sm"
+						variant="outline"
+						>
+							Complete quest
+						</Button>
+					</div>
+
                     </motion.div>
                   )}
                 </AnimatePresence>
