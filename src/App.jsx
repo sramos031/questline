@@ -655,10 +655,9 @@ const decomposeTask = (id, force = false) => {
                         {task.steps.length > 0 && (
                           <div className="mt-4 pl-9">
                             <div onClick={() => toggleExpanded(task.id)} className="flex w-full items-center justify-between text-sm font-semibold text-amber-900">
-                              <Input value={step.title} onClick={event => event.stopPropagation()} onChange={event => updateStepTitle(task.id, step.id, event.target.value)}className={`border-0 bg-transparent p-0 shadow-none ${step.done ? "line-through" : ""}`}/>
-                              {task.expanded ? <ChevronDown size={17}/> : <ChevronRight size={17}/>} 
-							  <button onClick={() => toggleStep(task.id, step.id)} className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${step.done? "bg-emerald-600 text-white": "bg-amber-800 text-amber-50"}`}>{step.done ? "✓" : index + 1}</button>
-                            </div>
+                              <span>Quest path · {completedSteps}/{task.steps.length} subquests</span>
+							  {task.expanded ? <ChevronDown size={17}/> : <ChevronRight size={17}/>} 
+							  </div>
                             <Progress value={stepPercent} className="mt-2 h-2" />
                             <AnimatePresence initial={false}>
                               {task.expanded && (
@@ -666,7 +665,7 @@ const decomposeTask = (id, force = false) => {
                                   {visibleSteps.map((step, index) => (
                                     <button key={step.id} onClick={() => toggleStep(task.id, step.id)} className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm transition ${step.done ? "border-emerald-200 bg-emerald-50 text-stone-500" : "border-amber-800/15 bg-amber-50 hover:border-violet-400"}`}>
                                       <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${step.done ? "bg-emerald-600 text-white" : "bg-amber-800 text-amber-50"}`}>{step.done ? "✓" : index + 1}</span>
-                                      <span className={step.done ? "line-through" : ""}>{step.title}</span>
+                                      <Input value={step.title} onClick={event => event.stopPropagation()} onChange={event => updateStepTitle( task.id, step.id, event.target.value)} className={`border-0 bg-transparent p-0 shadow-none ${step.done ? "line-through" : ""}`}/>
                                       {!step.done && <span className="ml-auto text-xs text-amber-800">+5 XP</span>}
                                     </button>
                                   ))}
