@@ -1211,6 +1211,9 @@ const [dragons, setDragons] = useState([]);
 	
 						<div className="text-xs text-stone-500">
 							{reward.detail}
+							<span className="text-xs text-stone-500">
+							⏱️ {reward.duration} min
+							</span>
 						</div>
 						</button>
 					))}
