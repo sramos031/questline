@@ -378,43 +378,11 @@ React.useEffect(() => {
     if (!title.trim()) return;
     const config = questTypes[type];
     const task = { id: Date.now(), title: title.trim(), type, points: config.points, done: false, started: false, steps: [], expanded: true };
-	if (type === "Boss") {
-		setDragons(current => [
-			...current,
-			{
-				id: task.id,
-				name: title.trim(),
-				hp: 100,
-				maxHp: 100,
-				defeated: false
-			}
-		]);
-	}
     setTasks(current => [...current, task]);
     setSelectedId(task.id);
     setTitle("");
     announce(`${config.label} accepted!`);
   };
-  
-  const damageDragon = (taskId, damage) => {
-  setDragons(current =>
-    current.map(dragon => {
-      if (dragon.id !== taskId)
-        return dragon;
-
-      const newHp = Math.max(
-        0,
-        dragon.hp - damage
-      );
-
-      return {
-        ...dragon,
-        hp: newHp,
-        defeated: newHp === 0
-      };
-    })
-  );
-};
 
   const deleteTask = id => {
     setTasks(current => current.filter(task => task.id !== id));
@@ -435,13 +403,6 @@ React.useEffect(() => {
   const completeTask = id => {
     const task = tasks.find(item => item.id === id);
     if (!task || task.done) return;
-	const dragon = dragons.find(
-		d => d.id === id
-		);
-
-		if (dragon) {
-		damageDragon(id, 999);
-		}
     setTasks(current => current.map(item => item.id === id ? { ...item, done: true, steps: item.steps.map(step => ({ ...step, done: true })) } : item));
     setXp(value => value + task.points);
     setGold(value => value + Math.max(2, Math.round(task.points / 5)));
@@ -513,7 +474,6 @@ const decomposeTask = (id, force = false) => {
     if (step && !step.done) {
       setXp(value => value + 5);
       setGold(value => value + 1);
-	  damageDragon(taskId, 15);
       announce("Subquest complete: +5 XP and +1 gold!");
     }
   };
@@ -568,8 +528,6 @@ const decomposeTask = (id, force = false) => {
     })
   );
 };
-
-const [dragons, setDragons] = useState([]);
 
 
   const format = value => `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
@@ -750,58 +708,6 @@ const [dragons, setDragons] = useState([]);
                 <p className="mt-3 text-xs text-slate-400">Complete a round to earn 10 XP and 3 gold. A gentle victory chime sounds at the end.</p>
               </CardContent>
             </Card>
-
-			<Card className="border-red-500/40
-							bg-slate-950/75
-							text-red-100"
-				>
-				<CardHeader>
-					<CardTitle>
-					🐉 Active Dragons
-					</CardTitle>
-				</CardHeader>
-
-				<CardContent>
-					{dragons.length === 0 && (
-					<p>
-						No dragons currently threaten
-						the kingdom.
-					</p>
-					)}
-
-					{dragons.map(dragon => (
-					<div
-						key={dragon.id}
-						className="mb-4"
-					>
-						<div className="flex justify-between">
-						<span>
-							{dragon.name}
-						</span>
-
-						<span>
-							{dragon.hp}/
-							{dragon.maxHp}
-						</span>
-						</div>
-
-						<Progress
-						value={
-							(dragon.hp /
-							dragon.maxHp) * 100
-						}
-						className="mt-2"
-						/>
-
-						{dragon.defeated && (
-						<div className="mt-2 text-green-400 font-bold">
-							🏆 Dragon Defeated!
-						</div>
-						)}
-					</div>
-					))}
-				</CardContent>
-			</Card>
 
             <Card className="border-amber-300/40 bg-[#f5e6c8] text-stone-900">
               <CardHeader><CardTitle className="flex items-center gap-2 font-serif"><Gift className="text-amber-800"/>Reward Chest</CardTitle></CardHeader>
