@@ -1135,9 +1135,9 @@ const [dragons, setDragons] = useState([]);
 					onClick={() => setRewardOpen(rewardOpen === "instant" ? null : "instant")}
 				>
 					<Coins size={20} />
-					<span className="font-serif">Instant Loot Chest</span>
+					<span className="font-Bold">Treats</span>
 					<span className="text-xs font-normal opacity-80">
-					Tiny treats · 10–25g
+					10–25g
 					</span>
 				</Button>
 
@@ -1147,9 +1147,9 @@ const [dragons, setDragons] = useState([]);
 					onClick={() => setRewardOpen(rewardOpen === "restorative" ? null : "restorative")}
 				>
 					<Heart size={20} />
-					<span className="font-serif">Restorative Chest</span>
+					<span className="font-Bold">Recharge</span>
 					<span className="text-xs font-normal opacity-80">
-					Rest, recharge, recover · 20–50g
+					20–50g
 					</span>
 				</Button>
 
@@ -1159,9 +1159,9 @@ const [dragons, setDragons] = useState([]);
 					onClick={() => setRewardOpen(rewardOpen === "treasure" ? null : "treasure")}
 				>
 				<Gem size={20} />
-					<span className="font-serif">Treasure Chest</span>
+					<span className="font-bold">Treasure</span>
 					<span className="text-xs font-normal opacity-80">
-					Quests worth saving for · 50g+
+					50g+
 					</span>
 				</Button>
 
@@ -1178,10 +1178,10 @@ const [dragons, setDragons] = useState([]);
 					>
 					{(
 						rewardOpen === "instant"
-						? instantRewards
+						? instantLoot
 						: rewardOpen === "restorative"
-							? restorativeRewards
-							: treasureRewards
+							? restorativeLoot
+							: treasureLoot
 					).map(reward => (
 						<button
 						key={reward.id}
