@@ -61,160 +61,174 @@ const initialTasks = [
 
 
 const instantLoot = [
-  // ☕ Tiny Treats
   {
     id: "tea",
     name: "Tavern Refreshment",
     detail: "Enjoy a favorite drink or snack",
-    cost: 15
+    cost: 15,
+    duration: null
   },
   {
     id: "sweet",
     name: "Sugar Sprite",
     detail: "Claim a small favorite sweet or treat",
-    cost: 20
+    cost: 20,
+    duration: null
   },
   {
     id: "music",
     name: "Bard's Favor",
     detail: "Watch a favorite music video or listen to a favorite song",
-    cost: 10
+    cost: 10,
+    duration: 10
   },
   {
     id: "silly",
     name: "Court Jester's Interlude",
     detail: "Spend a few minutes doing something delightfully pointless",
-    cost: 10
+    cost: 10,
+    duration: 10
   }
 ];
 
 
 const restorativeLoot = [
-  // 🏕️ Rest & Recovery
   {
     id: "cozy",
     name: "Cozy Campfire",
-    detail: "Get extra cozy for a little while",
-    cost: 15
+    detail: "Get extra cozy and do absolutely nothing for a little while",
+    cost: 15,
+    duration: 15
   },
   {
     id: "break",
     name: "Campfire Rest",
-    detail: "Take a guilt-free 15-minute break",
-    cost: 25
-  },
-  {
-    id: "long-break",
-    name: "Hero's Respite",
-    detail: "Take a guilt-free 30-minute break",
-    cost: 45
-  },
-  {
-    id: "nap",
-    name: "Enchanted Slumber",
-    detail: "Take a short nap or lie down and recharge",
-    cost: 50
+    detail: "Take a guilt-free break",
+    cost: 25,
+    duration: 15
   },
   {
     id: "outside",
     name: "Forest Interlude",
     detail: "Step outside and enjoy some fresh air",
-    cost: 20
+    cost: 20,
+    duration: 15
   },
-
-  // 🎨 Restful Hobbies
+  {
+    id: "long-break",
+    name: "Hero's Respite",
+    detail: "Take a guilt-free extended break",
+    cost: 45,
+    duration: 30
+  },
+  {
+    id: "nap",
+    name: "Enchanted Slumber",
+    detail: "Take a short nap or lie down and recharge",
+    cost: 50,
+    duration: 30
+  },
   {
     id: "book",
     name: "Tome of Leisure",
-    detail: "Read for pleasure without feeling like you should be doing something else",
-    cost: 35
+    detail: "Read purely for pleasure, with no productivity requirements",
+    cost: 35,
+    duration: 30
   },
   {
     id: "paint",
     name: "Artist's Interlude",
-    detail: "Spend some time painting or creating just for fun",
-    cost: 40
+    detail: "Paint or create purely for fun",
+    cost: 40,
+    duration: 45
   },
   {
     id: "craft",
     name: "Workshop Permission",
     detail: "Work on a hobby project with zero productivity requirements",
-    cost: 45
+    cost: 45,
+    duration: 45
   },
   {
     id: "playlist",
     name: "Bard's Private Concert",
-    detail: "Put on headphones and enjoy a favorite album from start to finish",
-    cost: 50
+    detail: "Enjoy a favorite album from start to finish",
+    cost: 50,
+    duration: 60
   }
 ];
 
 
 const treasureLoot = [
-  // 🎮 Entertainment
-  {
-    id: "game",
-    name: "Arcade Portal",
-    detail: "Take a 20-minute gaming break",
-    cost: 40
-  },
   {
     id: "youtube",
     name: "Scrying Session",
     detail: "Watch a few favorite videos",
-    cost: 30
+    cost: 30,
+    duration: 20
+  },
+  {
+    id: "game",
+    name: "Arcade Portal",
+    detail: "Take a gaming break",
+    cost: 40,
+    duration: 20
   },
   {
     id: "show",
     name: "Crystal Ball Viewing",
     detail: "Watch one episode of a favorite show",
-    cost: 75
+    cost: 75,
+    duration: 60
   },
-
-  // 🐉 Premium Loot
   {
     id: "dessert",
     name: "Dragon's Hoard",
     detail: "Get a particularly indulgent favorite dessert",
-    cost: 80
+    cost: 80,
+    duration: null
   },
   {
     id: "takeout",
     name: "Feast of the Victorious",
     detail: "Order or pick up a favorite meal",
-    cost: 100
+    cost: 100,
+    duration: null
   },
   {
     id: "shopping",
     name: "Merchant's Temptation",
     detail: "Spend a small amount on something you've been eyeing",
-    cost: 150
+    cost: 150,
+    duration: null
   },
   {
     id: "treat-yourself",
     name: "Royal Treasury",
     detail: "Buy yourself a guilt-free little luxury",
-    cost: 200
+    cost: 200,
+    duration: null
   },
-
-  // 🏆 Big Rewards
   {
     id: "movie",
     name: "Grand Theater Quest",
     detail: "Go see a movie you've been wanting to watch",
-    cost: 150
+    cost: 150,
+    duration: 150
   },
   {
     id: "outing",
     name: "Side Quest Unlocked",
     detail: "Go somewhere fun purely because you want to",
-    cost: 200
+    cost: 200,
+    duration: 180
   },
   {
     id: "full-day",
     name: "Day of the Hero",
     detail: "Claim a block of guilt-free leisure for yourself",
-    cost: 300
+    cost: 300,
+    duration: 480
   }
 ];
 
