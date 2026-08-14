@@ -661,10 +661,10 @@ const decomposeTask = (id, force = false) => {
 
                         {task.steps.length > 0 && (
                           <div className="mt-4 pl-9">
-                            <div onClick={() => toggleExpanded(task.id)} className="flex w-full items-center justify-between text-sm font-semibold text-amber-900">
+                            <button onClick={() => toggleExpanded(task.id)} className="flex w-full items-center justify-between text-sm font-semibold text-amber-900">
                               <span>Quest path · {completedSteps}/{task.steps.length} subquests</span>
 							  {task.expanded ? <ChevronDown size={17}/> : <ChevronRight size={17}/>} 
-							  </div>
+							  </button>
                             <Progress value={stepPercent} className="mt-2 h-2" />
                             <AnimatePresence initial={false}>
                               {task.expanded && (
