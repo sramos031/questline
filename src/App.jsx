@@ -66,28 +66,28 @@ const instantLoot = [
     name: "Tavern Refreshment",
     detail: "Enjoy a favorite drink or snack",
     cost: 15,
-    duration: null
+    durationMinutes: null
   },
   {
     id: "sweet",
     name: "Sugar Sprite",
     detail: "Claim a small favorite sweet or treat",
     cost: 20,
-    duration: null
+    durationMinutes: null
   },
   {
     id: "music",
     name: "Bard's Favor",
     detail: "Watch a favorite music video or listen to a favorite song",
     cost: 10,
-    duration: 10
+    durationMinutes: 10
   },
   {
     id: "silly",
     name: "Court Jester's Interlude",
     detail: "Spend a few minutes doing something delightfully pointless",
     cost: 10,
-    duration: 10
+    durationMinutes: 10
   }
 ];
 
@@ -98,63 +98,63 @@ const restorativeLoot = [
     name: "Cozy Campfire",
     detail: "Get extra cozy and do absolutely nothing for a little while",
     cost: 15,
-    duration: 15
+    durationMinutes: 15
   },
   {
     id: "break",
     name: "Campfire Rest",
     detail: "Take a guilt-free break",
     cost: 25,
-    duration: 15
+    durationMinutes: 15
   },
   {
     id: "outside",
     name: "Forest Interlude",
     detail: "Step outside and enjoy some fresh air",
     cost: 20,
-    duration: 15
+    durationMinutes: 15
   },
   {
     id: "long-break",
     name: "Hero's Respite",
     detail: "Take a guilt-free extended break",
     cost: 45,
-    duration: 30
+    durationMinutes: 30
   },
   {
     id: "nap",
     name: "Enchanted Slumber",
     detail: "Take a short nap or lie down and recharge",
     cost: 50,
-    duration: 30
+    durationMinutes: 30
   },
   {
     id: "book",
     name: "Tome of Leisure",
     detail: "Read purely for pleasure, with no productivity requirements",
     cost: 35,
-    duration: 30
+    durationMinutes: 30
   },
   {
     id: "paint",
     name: "Artist's Interlude",
     detail: "Paint or create purely for fun",
     cost: 40,
-    duration: 45
+    durationMinutes: 45
   },
   {
     id: "craft",
     name: "Workshop Permission",
     detail: "Work on a hobby project with zero productivity requirements",
     cost: 45,
-    duration: 45
+    durationMinutes: 45
   },
   {
     id: "playlist",
     name: "Bard's Private Concert",
     detail: "Enjoy a favorite album from start to finish",
     cost: 50,
-    duration: 60
+    durationMinutes: 60
   }
 ];
 
@@ -165,70 +165,70 @@ const treasureLoot = [
     name: "Scrying Session",
     detail: "Watch a few favorite videos",
     cost: 30,
-    duration: 20
+    durationMinutes: 20
   },
   {
     id: "game",
     name: "Arcade Portal",
     detail: "Take a gaming break",
     cost: 40,
-    duration: 20
+    durationMinutes: 20
   },
   {
     id: "show",
     name: "Crystal Ball Viewing",
     detail: "Watch one episode of a favorite show",
     cost: 75,
-    duration: 60
+    durationMinutes: 60
   },
   {
     id: "dessert",
     name: "Dragon's Hoard",
     detail: "Get a particularly indulgent favorite dessert",
     cost: 80,
-    duration: null
+    durationMinutes: null
   },
   {
     id: "takeout",
     name: "Feast of the Victorious",
     detail: "Order or pick up a favorite meal",
     cost: 100,
-    duration: null
+    durationMinutes: null
   },
   {
     id: "shopping",
     name: "Merchant's Temptation",
     detail: "Spend a small amount on something you've been eyeing",
     cost: 150,
-    duration: null
+    durationMinutes: null
   },
   {
     id: "treat-yourself",
     name: "Royal Treasury",
     detail: "Buy yourself a guilt-free little luxury",
     cost: 200,
-    duration: null
+    durationMinutes: null
   },
   {
     id: "movie",
     name: "Grand Theater Quest",
     detail: "Go see a movie you've been wanting to watch",
     cost: 150,
-    duration: 150
+    durationMinutes: 150
   },
   {
     id: "outing",
     name: "Side Quest Unlocked",
     detail: "Go somewhere fun purely because you want to",
     cost: 200,
-    duration: 180
+    durationMinutes: 180
   },
   {
     id: "full-day",
     name: "Day of the Hero",
     detail: "Claim a block of guilt-free leisure for yourself",
     cost: 300,
-    duration: 480
+    durationMinutes: 480
   }
 ];
 
@@ -1211,10 +1211,14 @@ const [dragons, setDragons] = useState([]);
 	
 						<div className="text-xs text-stone-500">
 							{reward.detail}
-							<span className="text-xs text-stone-500">
-							⏱️ {reward.duration} min
-							</span>
 						</div>
+						
+						{reward.durationMinutes != null && (
+						<div className="mt-2 flex items-center gap-3 text-xs text-stone-400">
+							<span>⏱️ {reward.durationMinutes} min</span>
+						</div>
+						)}
+
 						</button>
 					))}
 					</motion.div>
