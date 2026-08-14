@@ -17,6 +17,8 @@ import {
   Flame,
   Footprints,
   Gift,
+  Gem,
+  Heart,
   Pause,
   Play,
   Plus,
@@ -58,11 +60,162 @@ const initialTasks = [
 ];
 
 
-const rewardChoices = [
-  { id: "tea", name: "Tavern Refreshment", detail: "Enjoy a favorite drink or snack", cost: 15 },
-  { id: "break", name: "Campfire Rest", detail: "Take a guilt-free 15-minute break", cost: 25 },
-  { id: "music", name: "Bard's Favor", detail: "Watch a favorite music video", cost: 10 },
-  { id: "game", name: "Arcade Portal", detail: "Take a 20-minute gaming break", cost: 40 }
+const instantLoot = [
+  // ☕ Tiny Treats
+  {
+    id: "tea",
+    name: "Tavern Refreshment",
+    detail: "Enjoy a favorite drink or snack",
+    cost: 15
+  },
+  {
+    id: "sweet",
+    name: "Sugar Sprite",
+    detail: "Claim a small favorite sweet or treat",
+    cost: 20
+  },
+  {
+    id: "music",
+    name: "Bard's Favor",
+    detail: "Watch a favorite music video or listen to a favorite song",
+    cost: 10
+  },
+  {
+    id: "silly",
+    name: "Court Jester's Interlude",
+    detail: "Spend a few minutes doing something delightfully pointless",
+    cost: 10
+  }
+];
+
+
+const restorativeLoot = [
+  // 🏕️ Rest & Recovery
+  {
+    id: "cozy",
+    name: "Cozy Campfire",
+    detail: "Get extra cozy for a little while",
+    cost: 15
+  },
+  {
+    id: "break",
+    name: "Campfire Rest",
+    detail: "Take a guilt-free 15-minute break",
+    cost: 25
+  },
+  {
+    id: "long-break",
+    name: "Hero's Respite",
+    detail: "Take a guilt-free 30-minute break",
+    cost: 45
+  },
+  {
+    id: "nap",
+    name: "Enchanted Slumber",
+    detail: "Take a short nap or lie down and recharge",
+    cost: 50
+  },
+  {
+    id: "outside",
+    name: "Forest Interlude",
+    detail: "Step outside and enjoy some fresh air",
+    cost: 20
+  },
+
+  // 🎨 Restful Hobbies
+  {
+    id: "book",
+    name: "Tome of Leisure",
+    detail: "Read for pleasure without feeling like you should be doing something else",
+    cost: 35
+  },
+  {
+    id: "paint",
+    name: "Artist's Interlude",
+    detail: "Spend some time painting or creating just for fun",
+    cost: 40
+  },
+  {
+    id: "craft",
+    name: "Workshop Permission",
+    detail: "Work on a hobby project with zero productivity requirements",
+    cost: 45
+  },
+  {
+    id: "playlist",
+    name: "Bard's Private Concert",
+    detail: "Put on headphones and enjoy a favorite album from start to finish",
+    cost: 50
+  }
+];
+
+
+const treasureLoot = [
+  // 🎮 Entertainment
+  {
+    id: "game",
+    name: "Arcade Portal",
+    detail: "Take a 20-minute gaming break",
+    cost: 40
+  },
+  {
+    id: "youtube",
+    name: "Scrying Session",
+    detail: "Watch a few favorite videos",
+    cost: 30
+  },
+  {
+    id: "show",
+    name: "Crystal Ball Viewing",
+    detail: "Watch one episode of a favorite show",
+    cost: 75
+  },
+
+  // 🐉 Premium Loot
+  {
+    id: "dessert",
+    name: "Dragon's Hoard",
+    detail: "Get a particularly indulgent favorite dessert",
+    cost: 80
+  },
+  {
+    id: "takeout",
+    name: "Feast of the Victorious",
+    detail: "Order or pick up a favorite meal",
+    cost: 100
+  },
+  {
+    id: "shopping",
+    name: "Merchant's Temptation",
+    detail: "Spend a small amount on something you've been eyeing",
+    cost: 150
+  },
+  {
+    id: "treat-yourself",
+    name: "Royal Treasury",
+    detail: "Buy yourself a guilt-free little luxury",
+    cost: 200
+  },
+
+  // 🏆 Big Rewards
+  {
+    id: "movie",
+    name: "Grand Theater Quest",
+    detail: "Go see a movie you've been wanting to watch",
+    cost: 150
+  },
+  {
+    id: "outing",
+    name: "Side Quest Unlocked",
+    detail: "Go somewhere fun purely because you want to",
+    cost: 200
+  },
+  {
+    id: "full-day",
+    name: "Day of the Hero",
+    detail: "Claim a block of guilt-free leisure for yourself",
+    cost: 300
+  }
 ];
 
 const dragonMPrefixes = [
@@ -406,7 +559,7 @@ React.useEffect(() => {
 }, [gold]);
   const [focusRounds, setFocusRounds] = useState(0);
   const [lesson, setLesson] = useState(0);
-  const [rewardOpen, setRewardOpen] = useState(false);
+  const [rewardOpen, setRewardOpen] = useState(null);
   const [toast, setToast] = useState("");
   const timerRef = useRef(null);
 
@@ -953,25 +1106,106 @@ const [dragons, setDragons] = useState([]);
 				</CardContent>
 			</Card>
 
-            <Card className="border-amber-300/40 bg-[#f5e6c8] text-stone-900">
-              <CardHeader><CardTitle className="flex items-center gap-2 font-serif"><Gift className="text-amber-800"/>Reward Chest</CardTitle></CardHeader>
-              <CardContent>
-                <p className="text-sm text-stone-600">Spend earned gold on a real-world reward you choose in advance.</p>
-                <Button className="mt-4 w-full bg-amber-800 hover:bg-amber-900" onClick={() => setRewardOpen(!rewardOpen)}><Coins size={17}/><span className="ml-2">Open chest · {gold} gold</span></Button>
-                <AnimatePresence>
-                  {rewardOpen && (
-                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3 space-y-2 overflow-hidden">
-                      {rewardChoices.map(reward => (
-                        <button key={reward.id} onClick={() => redeemReward(reward)} className="w-full rounded-xl border border-amber-800/20 bg-white/60 p-3 text-left hover:border-amber-700">
-                          <div className="flex justify-between gap-2 font-semibold"><span>{reward.name}</span><span className="text-amber-800">{reward.cost}g</span></div>
-                          <div className="text-xs text-stone-500">{reward.detail}</div>
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </CardContent>
-            </Card>
+			<Card className="border-amber-300/40 bg-[#f5e6c8] text-stone-900">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2 font-serif">
+				<Gift className="text-amber-800" />
+				Reward Chests
+				</CardTitle>
+			</CardHeader>
+
+			<CardContent>
+				<p className="text-sm text-stone-600">
+				Spend earned gold on a real-world reward you choose in advance.
+				</p>
+				<div className="mt-4 mb-3 flex items-center justify-between rounded-xl bg-amber-900/10 px-4 py-2">
+			<span className="text-sm font-medium text-stone-600">
+				Your earned gold
+			</span>
+			<span className="flex items-center gap-1 font-bold text-amber-800">
+				<Coins size={16} />
+				{gold}g
+			</span>
+			</div>
+				<div className="mt-4 grid gap-3 sm:grid-cols-3">
+
+				{/* Instant Loot */}
+				<Button
+					className="h-auto min-h-24 flex-col gap-1 bg-amber-700 hover:bg-amber-800"
+					onClick={() => setRewardOpen(rewardOpen === "instant" ? null : "instant")}
+				>
+					<Coins size={20} />
+					<span className="font-serif">Instant Loot Chest</span>
+					<span className="text-xs font-normal opacity-80">
+					Tiny treats · 10–25g
+					</span>
+				</Button>
+
+				{/* Restorative */}
+				<Button
+					className="h-auto min-h-24 flex-col gap-1 bg-emerald-700 hover:bg-emerald-800"
+					onClick={() => setRewardOpen(rewardOpen === "restorative" ? null : "restorative")}
+				>
+					<Heart size={20} />
+					<span className="font-serif">Restorative Chest</span>
+					<span className="text-xs font-normal opacity-80">
+					Rest, recharge, recover · 20–50g
+					</span>
+				</Button>
+
+				{/* Treasure */}
+				<Button
+					className="h-auto min-h-24 flex-col gap-1 bg-purple-800 hover:bg-purple-900"
+					onClick={() => setRewardOpen(rewardOpen === "treasure" ? null : "treasure")}
+				>
+				<Gem size={20} />
+					<span className="font-serif">Treasure Chest</span>
+					<span className="text-xs font-normal opacity-80">
+					Quests worth saving for · 50g+
+					</span>
+				</Button>
+
+				</div>
+
+				<AnimatePresence mode="wait">
+				{rewardOpen && (
+					<motion.div
+					key={rewardOpen}
+					initial={{ opacity: 0, height: 0 }}
+					animate={{ opacity: 1, height: "auto" }}
+					exit={{ opacity: 0, height: 0 }}
+					className="mt-4 space-y-2 overflow-hidden"
+					>
+					{(
+						rewardOpen === "instant"
+						? instantRewards
+						: rewardOpen === "restorative"
+							? restorativeRewards
+							: treasureRewards
+					).map(reward => (
+						<button
+						key={reward.id}
+						onClick={() => redeemReward(reward)}
+						className="w-full rounded-xl border border-amber-800/20 bg-white/60 p-3 text-left hover:border-amber-700"
+						>
+						<div className="flex justify-between gap-2 font-semibold">
+							<span>{reward.name}</span>
+							<span className="text-amber-800">
+							{reward.cost}g
+							</span>
+						</div>
+	
+						<div className="text-xs text-stone-500">
+							{reward.detail}
+						</div>
+						</button>
+					))}
+					</motion.div>
+				)}
+				</AnimatePresence>
+			</CardContent>
+			</Card>
+			
             <Card className="border-amber-300/40 bg-[#f5e6c8] text-stone-900">
               <CardHeader><CardTitle className="flex items-center gap-2 font-serif"><BookOpen className="text-amber-800"/>Adventurer Training</CardTitle></CardHeader>
               <CardContent>

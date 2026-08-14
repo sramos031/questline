@@ -659,6 +659,7 @@ const decomposeTask = (id, force = false) => {
       announce("Subquest complete: +5 XP and +1 gold!");
     }
   };
+  }
 
 
   const toggleExpanded = id => {
@@ -986,3 +987,4 @@ const [dragons, setDragons] = useState([]);
     </div>
   );
 }
+
