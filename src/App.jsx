@@ -425,7 +425,14 @@ const decomposeTask = (id, force = false) => {
   if (!task) return;
 
   if (task.steps.length && !force) {
-  setTasks(...)
+  setTasks(current =>
+    current.map(item =>
+      item.id === id
+        ? { ...item, expanded: true }
+        : item
+    )
+  );
+
   announce("This quest already has a revealed path.");
   return;
 }
