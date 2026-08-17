@@ -552,6 +552,7 @@ React.useEffect(() => {
   const [running, setRunning] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [goblinSteps, setGoblinSteps] = useState("");
+  const [showGoblinImport, setShowGoblinImport] = useState(false);
   const [xp, setXp] = useState(() => {
 		return Number(
 			localStorage.getItem("questline_xp")
@@ -840,6 +841,7 @@ const importGoblinSteps = (taskId) => {
   );
 
   setGoblinSteps("");
+  setShowGoblinImport(false);
   announce("🧙 Goblin path imported!");
 };
 ``
@@ -1015,33 +1017,35 @@ const [dragons, setDragons] = useState([]);
 						
 						<Button
 						  variant="outline"
-						  onClick={() =>
+						  onClick={() => {setShowGoblinImport(true);
 							window.open(
 							  `https://goblin.tools/ToDo?task=${encodeURIComponent(selected.title)}`,
 							  "_blank"
-							)
-						  }
+							);
+						  }}
 						>
 							<WandSparkles size={16}/>
-						  <span className="ml-1">Magic Breakdown</span>
+						    <span className="ml-1">Magic Breakdown</span>
 						</Button>
-						<div className="w-full mt-2">
-							<Textarea
-							  value={goblinSteps}
-							  onChange={(e) => setGoblinSteps(e.target.value)}
-							  placeholder="Paste Goblin output here..."
-							  className="mt-2 w-full"
-							/>
+						{showGoblinImport && (
+							<div className="w-full mt-2">
+								<Textarea
+								  value={goblinSteps}
+								  onChange={(e) => setGoblinSteps(e.target.value)}
+								  placeholder="Paste Goblin output here..."
+								  className="w-full rounded-md border border-amber-800/30 bg-white/60 p-2 text-sm text-stone-900"
+								/>
 
-							<Button
-							  size="sm"
-							  variant="outline"
-							  onClick={() => importGoblinSteps(selected.id)}
-							>
-							  Import Goblin Steps
-							</Button>
-						</div>
-
+								<Button
+								  className="mt-2"
+								  size="sm"
+								  variant="outline"
+								  onClick={() => importGoblinSteps(selected.id)}
+								>
+								  Import Goblin Steps
+								</Button>
+							</div>
+						)}
 						<Button
 						onClick={() => completeTask(selected.id)}
 						size="sm"
