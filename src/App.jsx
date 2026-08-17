@@ -1,5 +1,18 @@
 
 import React, { useMemo, useRef, useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -532,6 +545,31 @@ const makeSteps = (title, questType = "Side") => {
   return steps.slice(0, limits[questType] || 6);
 };
 
+function SortableQuest({ task, children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Questline() {
   const [tasks, setTasks] = useState(() => {
@@ -544,7 +582,6 @@ React.useEffect(() => {
 	JSON.stringify(tasks)
 	);
 }, [tasks]);  
-
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Side");
   const [minutes, setMinutes] = useState(10);
@@ -926,7 +963,27 @@ const importGoblinSteps = (taskId) => {
 };
 
 const [dragons, setDragons] = useState([]);
+const handleDragEnd = (event) => {
+  const { active, over } = event;
 
+  if (!over || active.id === over.id) return;
+
+  setTasks((currentTasks) => {
+    const oldIndex = currentTasks.findIndex(
+      (task) => task.id === active.id
+    );
+
+    const newIndex = currentTasks.findIndex(
+      (task) => task.id === over.id
+    );
+
+    return arrayMove(
+      currentTasks,
+      oldIndex,
+      newIndex
+    );
+  });
+};
 
   const format = value => `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
 
@@ -1055,16 +1112,27 @@ const [dragons, setDragons] = useState([]);
                 </AnimatePresence>
 
 
-                <div className="space-y-3">
-                  {tasks.map(task => {
+<DndContext
+  collisionDetection={closestCenter}
+  onDragEnd={handleDragEnd}
+>
+  <SortableContext
+    items={openTasks.map((t) => t.id)}
+    strategy={verticalListSortingStrategy}
+  >
+    <div className="space-y-3">
+
+      {tasks.map(task => {
                     const completedSteps = task.steps.filter(step => step.done).length;
 					const completed = task.steps.filter(step => step.done);
 					const upcoming = task.steps.filter(step => !step.done).slice(0, completed.length + 3);
 					const visibleSteps = [...completed,...upcoming];
                     const stepPercent = task.steps.length ? (completedSteps / task.steps.length) * 100 : 0;
                     return (
+                      <SortableQuest task={task}>
                       <motion.div layout key={task.id} className={`rounded-2xl border p-4 ${task.done ? "border-emerald-400 bg-emerald-50" : selectedId === task.id ? "border-violet-500 bg-white" : "border-amber-800/20 bg-white/60"}`}>
                         <div className="flex items-start justify-between gap-3">
+                          <GripVertical size={18} className="text-stone-400 cursor-grab mt-1"/>
                           <div className="flex min-w-0 items-start gap-3">
                             <button onClick={() => completeTask(task.id)} className={task.done ? "text-emerald-600" : "mt-0.5 text-stone-400 hover:text-emerald-600"}><CheckCircle2/></button>
                             <div className="min-w-0">
@@ -1109,9 +1177,13 @@ const [dragons, setDragons] = useState([]);
                           </div>
                         )}
                       </motion.div>
+                      </SortableQuest>
                     );
                   })}
-                </div>
+
+                  </div>
+                 </SortableContext>
+                </DndContext>
               </CardContent>
             </Card>
           </div>
