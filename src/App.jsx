@@ -1016,6 +1016,7 @@ const [dragons, setDragons] = useState([]);
 						)}
 						
 						<Button
+						  size="sm"
 						  variant="outline"
 						  onClick={() => {setShowGoblinImport(true);
 							window.open(
@@ -1027,6 +1028,7 @@ const [dragons, setDragons] = useState([]);
 							<WandSparkles size={16}/>
 						    <span className="ml-1">Magic Breakdown</span>
 						</Button>
+						
 						{showGoblinImport && (
 							<div className="w-full mt-2">
 								<Textarea
@@ -1041,8 +1043,7 @@ const [dragons, setDragons] = useState([]);
 								  size="sm"
 								  variant="outline"
 								  onClick={() => importGoblinSteps(selected.id)}
-								>
-								  Import Goblin Steps
+								>Import Goblin Steps
 								</Button>
 							</div>
 						)}
