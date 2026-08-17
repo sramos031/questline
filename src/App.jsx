@@ -999,9 +999,7 @@ const [dragons, setDragons] = useState([]);
 						onClick={() => decomposeTask(selected.id)}
 						size="sm"
 						variant="outline"
-						>
-							<Swords size={16}/>
-							<span className="ml-1">Reveal smaller steps</span>
+						>⚔️ Reveal smaller steps
 						</Button>
 
 						{selected.steps.length > 0 && (
@@ -1009,9 +1007,7 @@ const [dragons, setDragons] = useState([]);
 						onClick={() => decomposeTask(selected.id, true)}
 						size="sm"
 						variant="outline"
-						>
-							<Dices size={16}/>
-							<span className="ml-1">Reroll quest path</span>
+						>🎲 Reroll quest path
 						</Button>
 						)}
 						
@@ -1024,9 +1020,7 @@ const [dragons, setDragons] = useState([]);
 							  "_blank"
 							);
 						  }}
-						>
-							<WandSparkles size={16}/>
-						    <span className="ml-1">Magic Breakdown</span>
+						>🔮 Magic Breakdown
 						</Button>
 						
 						{showGoblinImport && (
