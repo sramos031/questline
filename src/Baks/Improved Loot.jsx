@@ -549,40 +549,28 @@ React.useEffect(() => {
   const [seconds, setSeconds] = useState(600);
   const [running, setRunning] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-	const [xp, setXp] = useState(() => {
-		return Number(
-			localStorage.getItem("questline_xp")
-		) || 0;
-	});
-	React.useEffect(() => {
-	  localStorage.setItem(
-		"questline_xp",
-		xp
-	  );
-	}, [xp]);
-	const [gold, setGold] = useState(() => {
-	  return Number(
-		localStorage.getItem("questline_gold")
-	  ) || 0;
-	});
-	React.useEffect(() => {
-	  localStorage.setItem(
-		"questline_gold",
-		gold
-	  );
-	}, [gold]);
-	const [trophies, setTrophies] = useState(() => {
-	  return Number(
-		localStorage.getItem("questline_trophies")
-	  ) || 0;
-	});
-
-	React.useEffect(() => {
-	  localStorage.setItem(
-		"questline_trophies",
-		trophies
-	  );
-	}, [trophies]);
+const [xp, setXp] = useState(() => {
+	return Number(
+		localStorage.getItem("questline_xp")
+	) || 0;
+});
+React.useEffect(() => {
+  localStorage.setItem(
+    "questline_xp",
+    xp
+  );
+}, [xp]);
+const [gold, setGold] = useState(() => {
+  return Number(
+    localStorage.getItem("questline_gold")
+  ) || 0;
+});
+React.useEffect(() => {
+  localStorage.setItem(
+    "questline_gold",
+    gold
+  );
+}, [gold]);
   const [focusRounds, setFocusRounds] = useState(0);
   const [lesson, setLesson] = useState(0);
   const [rewardOpen, setRewardOpen] = useState(null);
@@ -670,21 +658,30 @@ React.useEffect(() => {
     if (!title.trim()) return;
     const config = questTypes[type];
     const task = { id: Date.now(), title: title.trim(), type, points: config.points, done: false, started: false, steps: [], expanded: true };
-	if (type === "Boss") {
-	  const dragonHp = dragonHpByType[type] || 100;
-
-	  setDragons(current => [
+	const dragonHp = dragonHpByType[type] || 50;
+		setDragons(current => [
 		...current,
 		{
-		  id: task.id,
-		  questId: task.id,
-		  questTitle: task.title,
-		  dragonName: generateDragonName(),
-		  hp: dragonHp,
-		  maxHp: dragonHp,
-		  defeated: false
+			id: task.id,
+			questId: task.id,
+			questTitle: task.title,
+			dragonName: generateDragonName(),
+			hp: dragonHp,
+			maxHp: dragonHp,
+			defeated: false
 		}
-	  ]);
+		]);
+	if (type === "Boss") {
+		setDragons(current => [
+			...current,
+			{
+				id: task.id,
+				name: title.trim(),
+				hp: 100,
+				maxHp: 100,
+				defeated: false
+			}
+		]);
 	}
     setTasks(current => [...current, task]);
     setSelectedId(task.id);
@@ -705,14 +702,7 @@ React.useEffect(() => {
 	if (newHp === 0 &&!dragon.defeated) {
 		setXp(v => v + 50);
 		setGold(v => v + 50);
-		setTrophies(v => v + 1);
-		
 		announce(`🐉 ${dragon.dragonName} defeated! +50 XP +50 Gold`);
-		setTimeout(() => {
-			setDragons(current =>
-			current.filter(d => d.id !== dragon.id)
-			);
-		}, 2000);
 	}
 
       return {
@@ -910,10 +900,9 @@ const [dragons, setDragons] = useState([]);
               <div className="flex items-center justify-between"><div><div className="text-xs uppercase tracking-widest text-amber-300">Adventurer Rank</div><div className="mt-1 flex items-center gap-2 text-xl font-bold"><Crown size={20}/>{rank}</div></div><Badge className="border-amber-300 bg-amber-300 text-amber-950">Level {level}</Badge></div>
               <div className="mt-4 flex justify-between text-sm"><span>{xp} XP</span><span>{100 - levelProgress} to next rank</span></div>
               <Progress value={levelProgress} className="mt-2 h-2" />
-              <div className="mt-4 grid grid-cols-3 gap-2 text-sm">
+              <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                 <div className="rounded-xl bg-black/20 p-3"><Coins className="mb-1 text-amber-300" size={18}/><strong>{gold}</strong> gold</div>
                 <div className="rounded-xl bg-black/20 p-3"><Flame className="mb-1 text-orange-400" size={18}/><strong>{focusRounds}</strong> rounds</div>
-				<div className="rounded-xl bg-black/20 p-3">🏆<strong>{trophies}</strong> trophies</div>
               </div>
             </div>
           </div>
