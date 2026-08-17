@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import {
   BookOpen,
   CheckCircle2,
@@ -543,13 +544,15 @@ React.useEffect(() => {
 	JSON.stringify(tasks)
 	);
 }, [tasks]);  
+
   const [title, setTitle] = useState("");
   const [type, setType] = useState("Side");
   const [minutes, setMinutes] = useState(10);
   const [seconds, setSeconds] = useState(600);
   const [running, setRunning] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-	const [xp, setXp] = useState(() => {
+  const [goblinSteps, setGoblinSteps] = useState("");
+  const [xp, setXp] = useState(() => {
 		return Number(
 			localStorage.getItem("questline_xp")
 		) || 0;
@@ -809,6 +812,37 @@ const decomposeTask = (id, force = false) => {
   announce(force ? "A new route has been revealed!" : "The path has been revealed!");
 };
 
+const importGoblinSteps = (taskId) => {
+  if (!goblinSteps.trim()) return;
+
+  const steps = goblinSteps
+    .split("\n")
+    .map((step) =>
+      step.replace(/^\d+\.\s*/, "").trim()
+    )
+    .filter(Boolean)
+    .map((step, index) => ({
+      id: `${taskId}-goblin-${index}`,
+      title: step,
+      done: false,
+    }));
+
+  setTasks((current) =>
+    current.map((task) =>
+      task.id === taskId
+        ? {
+            ...task,
+            steps,
+            expanded: true,
+          }
+        : task
+    )
+  );
+
+  setGoblinSteps("");
+  announce("🧙 Goblin path imported!");
+};
+``
 
   const toggleStep = (taskId, stepId) => {
     setTasks(current => current.map(task => {
@@ -978,6 +1012,35 @@ const [dragons, setDragons] = useState([]);
 							<span className="ml-1">Reroll quest path</span>
 						</Button>
 						)}
+						
+						<Button
+						  variant="outline"
+						  onClick={() =>
+							window.open(
+							  `https://goblin.tools/ToDo?task=${encodeURIComponent(selected.title)}`,
+							  "_blank"
+							)
+						  }
+						>
+							<WandSparkles size={16}/>
+						  <span className="ml-1">Magic Breakdown</span>
+						</Button>
+						<div className="w-full mt-2">
+							<Textarea
+							  value={goblinSteps}
+							  onChange={(e) => setGoblinSteps(e.target.value)}
+							  placeholder="Paste Goblin output here..."
+							  className="mt-2 w-full"
+							/>
+
+							<Button
+							  size="sm"
+							  variant="outline"
+							  onClick={() => importGoblinSteps(selected.id)}
+							>
+							  Import Goblin Steps
+							</Button>
+						</div>
 
 						<Button
 						onClick={() => completeTask(selected.id)}
