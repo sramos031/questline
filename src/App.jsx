@@ -31,6 +31,7 @@ import {
   Flame,
   Footprints,
   Gift,
+  GripVertical,
   Gem,
   Heart,
   Pause,
