@@ -557,17 +557,15 @@ function SortableQuest({ task, children }) {
 
   const style = {
     transform: CSS.Transform.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
     transition,
   };
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      {children}
+      style={style}>
+      {children({ attributes, listeners })}
     </div>
   );
 }
@@ -1124,13 +1122,14 @@ const handleDragEnd = (event) => {
     <div className="space-y-3">
 
       {tasks.map(task => {
-                    const completedSteps = task.steps.filter(step => step.done).length;
+          const completedSteps = task.steps.filter(step => step.done).length;
 					const completed = task.steps.filter(step => step.done);
 					const upcoming = task.steps.filter(step => !step.done).slice(0, completed.length + 3);
 					const visibleSteps = [...completed,...upcoming];
                     const stepPercent = task.steps.length ? (completedSteps / task.steps.length) * 100 : 0;
                     return (
                       <SortableQuest task={task}>
+                        {({ attributes, listeners }) => (
                       <motion.div layout key={task.id} className={`rounded-2xl border p-4 ${task.done ? "border-emerald-400 bg-emerald-50" : selectedId === task.id ? "border-violet-500 bg-white" : "border-amber-800/20 bg-white/60"}`}>
                         <div className="flex items-start justify-between gap-3">
                           <GripVertical size={18} className="text-stone-400 cursor-grab mt-1"/>
@@ -1178,6 +1177,7 @@ const handleDragEnd = (event) => {
                           </div>
                         )}
                       </motion.div>
+                      )}
                       </SortableQuest>
                     );
                   })}
