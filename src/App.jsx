@@ -1133,7 +1133,7 @@ const handleDragEnd = (event) => {
                         {({ attributes, listeners }) => (
                       <motion.div layout key={task.id} className={`rounded-2xl border p-4 ${task.done ? "border-emerald-400 bg-emerald-50" : selectedId === task.id ? "border-violet-500 bg-white" : "border-amber-800/20 bg-white/60"}`}>
                         <div className="flex items-start justify-between gap-3">
-                          <GripVertical size={18} className="text-stone-400 cursor-grab mt-1"/>
+                          <GripVertical {...attributes} {...listeners}size={18} className="text-stone-400 cursor-grab mt-1"/>
                           <div className="flex min-w-0 items-start gap-3">
                             <button onClick={() => completeTask(task.id)} className={task.done ? "text-emerald-600" : "mt-0.5 text-stone-400 hover:text-emerald-600"}><CheckCircle2/></button>
                             <div className="min-w-0">
