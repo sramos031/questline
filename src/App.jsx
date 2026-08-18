@@ -9,7 +9,6 @@ import {
   SortableContext,
   verticalListSortingStrategy,
   useSortable,
-  isDragging,
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -554,6 +553,7 @@ function SortableQuest({ task, children }) {
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({ id: task.id });
 
   const style = {
