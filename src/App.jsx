@@ -558,8 +558,8 @@ function SortableQuest({ task, children }) {
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
     transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
